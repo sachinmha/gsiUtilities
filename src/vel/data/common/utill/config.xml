@@ -1,0 +1,340 @@
+<data-config>
+<database-connections>
+
+
+
+
+<!--
+<connection name="gsiConnection">
+<driver-class>  <![CDATA[oracle.jdbc.OracleDriver]]>  </driver-class>
+<jdbc-url><![CDATA[jdbc:oracle:thin:@10.1.22.110:1521:ORADEV1]]></jdbc-url>
+<user><![CDATA[DEV_EGOV_ADMIN]]></user>
+<password><![CDATA[egovadmin123]]></password>
+<init-param><![CDATA[ALTER SESSION SET NLS_DATE_FORMAT="DD/MM/YYYY HH24:MI:SS"]]></init-param>
+</connection>
+
+
+<connection name="gsiConnection">
+<driver-class>  <![CDATA[oracle.jdbc.OracleDriver]]>  </driver-class>
+<jdbc-url><![CDATA[jdbc:oracle:thin:@//prdclst-scan.gsi.gov.in:1521/PRDB.gsi.gov.in]]></jdbc-url>
+<user><![CDATA[PROD_EGOV]]></user>
+<password><![CDATA[prd_eg0v]]></password>
+<init-param><![CDATA[ALTER SESSION SET NLS_DATE_FORMAT="DD/MM/YYYY HH24:MI:SS"]]></init-param>
+</connection>
+
+
+
+-->
+
+<connection name="gsiConnection">
+<driver-class>  <![CDATA[oracle.jdbc.OracleDriver]]>  </driver-class>
+<jdbc-url><![CDATA[jdbc:oracle:thin:@//prdclst-scan.gsi.gov.in:1521/PRDB.gsi.gov.in]]></jdbc-url>
+<user><![CDATA[PROD_EGOV]]></user>
+<password><![CDATA[prd_eg0v]]></password>
+<init-param><![CDATA[ALTER SESSION SET NLS_DATE_FORMAT="DD/MM/YYYY HH24:MI:SS"]]></init-param>
+</connection>
+<!-- 
+
+
+
+<connection name="gsiConnection">
+<driver-class>  <![CDATA[oracle.jdbc.OracleDriver]]>  </driver-class>
+<jdbc-url><![CDATA[jdbc:oracle:thin:@//uatclust-scan.gsi.gov.in:1521/UATDB.gsi.gov.in]]></jdbc-url>
+<user><![CDATA[SIT_EGOV]]></user>
+<password><![CDATA[sit_egov]]></password>
+<init-param><![CDATA[ALTER SESSION SET NLS_DATE_FORMAT="DD/MM/YYYY HH24:MI:SS"]]></init-param>
+</connection>
+
+
+ 
+ <connection name="gsiConnection">
+<driver-class>  <![CDATA[oracle.jdbc.OracleDriver]]>  </driver-class>
+<jdbc-url><![CDATA[jdbc:oracle:thin:@192.168.100.64:1521:ORACLE]]></jdbc-url>
+<user><![CDATA[DEV_EGOV_ADMIN]]></user>
+<password><![CDATA[password]]></password>
+<init-param><![CDATA[ALTER SESSION SET NLS_DATE_FORMAT="DD/MM/YYYY HH24:MI:SS"]]></init-param>
+</connection>
+ -->
+ </database-connections>
+ 
+<data-source>
+
+<!-- 
+<dbservice connection="gsiConnection" >
+<query><![CDATA[select * from t_per_emp_personal_dtl_0103 where to_char(emp_id) in (select esh_employeeid from tl_hrms_sbook_emp_srvc_history where sesh_relieving_date is null and esh_employeeid not in(
+select sepd_employeeid from tl_hrms_sbook_emp_pay_dtl))and emp_basic is not null]]></query>
+</dbservice>
+
+<excelservice filePath="E:\\parvesh\\New folder (2)\\hrms data\\export.xlsx" sheetIndex="emp details"></excelservice>
+
+<excelservice filePath="E:\\parvesh\\New folder (2)\\hrms data\\Data_22052017_1\\data.xls" sheetIndex="SQL Results"></excelservice>
+-->
+
+<!--  STEP 1 & 3
+ <excelservice filePath="C:\\Users\\bpratap\\Desktop\\dataUtil\\IPR-Export.xls" sheetIndex="SQL Results"></excelservice>
+ 
+ STEP 2
+ <dbservice connection="gsiConnection" >
+<query><![CDATA[select * from TT_HRMS_AIPR]]></query>
+</dbservice>
+
+
+
+ <dbservice connection="gsiConnection" >
+<query><![CDATA[select clt_employeeid as EMPID from TT_HRMS_AIPR where year='2017' and desig is null]]></query>
+</dbservice>
+
+<dbservice connection="gsiConnection" >
+<query><![CDATA[select * from TT_HRMS_AIPR where year!='2017' ]]></query>
+</dbservice>
+
+<excelservice filePath="C:\\Users\\Lokesh\\Desktop\\dataUtil\\IPR-Export.xls" sheetIndex="SQL Results"></excelservice>
+<excelservice filePath="C:\\Users\\Lokesh\\Desktop\\IPR-Export.xls" sheetIndex="SQL Results"></excelservice>
+ -->
+
+<dbservice connection="gsiConnection" >
+<query><![CDATA[SELECT EMPLOYEEID FROM AUGMENT.AUGMS_EMPLOYEE WHERE RETIREMENT_DATE > TO_DATE('01/07/2018','DD/MM/YYYY')]]></query>
+</dbservice>
+
+</data-source>
+
+
+<data-validation>
+<!-- 
+<service type="selectdb"  connection="gsiConnection">
+<query><![CDATA[ ]]></query>
+<params><![CDATA[   ]]></params>
+</service> -->
+<service type="java"  connection="gsiConnection" >
+<class  name="vel.data.common.utill.EmpValidate"  />
+</service>
+</data-validation>
+
+
+
+<data-format-services>
+
+<!--
+
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT O2.OUID REGION FROM TM_HRMS_PARENT_OU_JOIN OJ,AUGMENT.AUGMS_OU O2  WHERE  O2.OUID=OJ.POUJ_OUID AND ROWNUM=1  AND 
+( O2.OUTYPEID='RHQ' OR O2.OUTYPEID='CHQ') START WITH  OJ.POUJ_OUID=?
+CONNECT BY PRIOR   OJ.POUJ_PARENT_OUID = OJ.POUJ_OUID]]></query>
+<params><![CDATA[OU_ID]]></params>
+</service>
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[select USERGROUPID ROLEID from AUGMENT.AUGMS_USERGROUP where USERGROUPNAME=?]]></query>
+<params><![CDATA[ROLE]]></params>
+</service>
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select ouid RID from augment.augms_ou where ouid=?]]></query>
+<params><![CDATA[REGION_CODE]]></params>
+</service> 
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select stat_id SID from tm_hrms_state where stat_code=?]]></query>
+<params><![CDATA[STATE_CODE]]></params>
+</service> 
+
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[select MSN_ID MID from tm_hrms_MISSION where MSN_code=?]]></query>
+<params><![CDATA[Mission]]></params>
+</service>
+
+
+
+
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select dist_id DID from tm_hrms_district where dist_code=?]]></query>
+<params><![CDATA[DISTRICT_CODE]]></params>
+</service> 
+
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[select stat_id SID from tm_hrms_state where stat_code=?]]></query>
+<params><![CDATA[STATE_CODE]]></params>
+</service>
+<service type="selectdb"  connection="gsiConnection">
+  <query><![CDATA[SELECT OUID SUID FROM AUGMENT.AUGMS_OU WHERE OU_SHORT_NAME=?]]></query>
+<params><![CDATA[SU]]></params>
+</service>
+
+
+
+
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT RLGN_ID RLGNID FROM TM_HRMS_RELIGION WHERE RLGN_NAME=?]]></query>
+<params><![CDATA[RELIGION_ID]]></params>
+</service> 
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT STAT_ID STATID FROM TM_HRMS_STATE WHERE STAT_CODE=?]]></query>
+<params><![CDATA[DOMICILE_ID]]></params>
+</service>
+
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT SEX_ID SEXID FROM TM_HRMS_SEX WHERE SEX_NAME=?]]></query>
+<params><![CDATA[SEX_ID]]></params>
+</service> 
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT MARITAL_STATUS_ID MSTATUSID FROM TM_HRMS_MARITAL_STATUS WHERE MARITAL_STATUS_NAME=?]]></query>
+<params><![CDATA[MARITAL_STATUS_ID]]></params>
+</service>
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select SESH_TO_ORG_UNIT_ID OUID from tl_hrms_sbook_emp_srvc_history where esh_employeeid=?]]></query>
+<params><![CDATA[EmployeeID]]></params>
+</service>
+<service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT QUAL_ID QID FROM TM_HRMS_QUALIFICATION WHERE QUAL_CODE=?]]></query>
+<params><![CDATA[QUAL_CODE]]></params>
+</service> 
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select MPBD_ID BID from TL_PMS_MONTHLY_PAYBILL_DETAIL where MPBD_EMPLOYEE_ID=?]]></query>
+<params><![CDATA[IMG_EMP_ID]]></params>
+</service> 
+ <service type="cacheSelectdb"  connection="gsiConnection">
+ <query><![CDATA[SELECT BANK_ID BID FROM TM_HRMS_BANK WHERE BANK_CODE=?]]></query>
+<params><![CDATA[EBD_BANK_CODE]]></params>
+</service> 
+
+ 
+ 
+ 
+ 
+ for TT_PMS_MONTHLY_PAYBILL_BKP
+  
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select PWA_PBR_ID PBR_ID from TM_PMS_PBR_WISE_EMP_ALLOC_BKP where PWA_EMPLOYEE_ID=?]]></query>
+<params><![CDATA[IMG_EMP_ID]]></params>
+</service> 
+ <service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select PH_PBR_HANDLER_ID PBR_EMP_ID from TM_PMS_PBR_HANDLER_BKP where PH_PBR_ID=?]]></query>
+<params><![CDATA[PBR_ID]]></params>
+</service>
+<service type="java" connection="gsiConnection">
+<class  name="vel.data.common.utill.DesignationService"  />
+</service>
+
+
+
+
+for TL_PMS_MONTHLY_PAYBILL_DETAIL
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select d.wfoid WFO_ID from TM_PMS_PBR_WISE_EMP_ALLOC_BKP b, TT_PMS_MONTHLY_PAYBILL_BKP d where b.PWA_EMPLOYEE_ID=? and b.PWA_PBR_ID=d.MPB_PBR_ID and d.MPB_YEAR_MONTH='201612']]></query>
+<params><![CDATA[IMG_EMP_ID]]></params>
+</service> 
+
+
+
+for TL_PMS_MPBL_EMP_PAY_IMG_BKP
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select b.MPBD_ID BID from TL_PMS_MONTHLY_PAYBILL_DTL_BKP b, TT_PMS_MONTHLY_PAYBILL_BKP d where b.MPBD_EMPLOYEE_ID=? and b.WFOID=d.WFOID and d.MPB_YEAR_MONTH='201612']]></query>
+<params><![CDATA[IMG_EMP_ID]]></params>
+</service> 
+
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select b.MPBD_ID BID from TL_PMS_MONTHLY_PAYBILL_DTL_BKP b, TT_PMS_MONTHLY_PAYBILL_BKP d where b.MPBD_EMPLOYEE_ID=? and b.WFOID=d.WFOID and d.MPB_YEAR_MONTH='201701']]></query>
+<params><![CDATA[IMG_EMP_ID]]></params>
+</service> 
+
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select WFOID from TT_HRMS_AIPR where CLT_EMPLOYEEID=? and YEAR=?]]></query>
+<params><![CDATA[EMP_ID~PROP_IMV_PROP_YR]]></params>
+</service> 
+
+
+ <service type="selectdb"  connection="gsiConnection">
+  <query><![CDATA[select DESIGID  from AUGMENT.AUGMS_DESIGNATION where DESIGNAME=?]]></query>
+<params><![CDATA[PGM_GRADE_DES]]></params>
+</service>
+
+<service type="selectdb"  connection="gsiConnection">
+  <query><![CDATA[select DESIGID  from AUGMENT.AUGMS_DESIGNATION where DESIGNAME=?]]></query>
+<params><![CDATA[PGM_GRADE_DES]]></params>
+</service>
+
+<service type="selectdb"  connection="gsiConnection">
+ <query><![CDATA[select WFOID from TT_HRMS_AIPR where CLT_EMPLOYEEID=? and YEAR=?]]></query>
+<params><![CDATA[EMP_ID~PROP_IMV_PROP_YR]]></params>
+</service> 
+ -->
+
+
+
+<service type="java" connection="gsiConnection">
+<class  name="vel.data.common.utill.DesignationService"  />
+</service>
+
+
+
+
+</data-format-services>
+
+
+
+
+
+<target-operation>
+
+<service type="insertdb" connection="gsiConnection">
+
+<query><![CDATA[update TT_HRMS_AIPR set DESIG=? where CLT_EMPLOYEEID=? and  YEAR=?]]></query>
+
+<params><![CDATA[DESIGID~EMP_ID~PROP_IMV_PROP_YR]]></params>
+
+
+</service>
+
+
+</target-operation>
+</data-config>
+
+
+
+<!-- 
+
+<service type="insertdb" connection="gsiConnection">
+
+<query><![CDATA[update TT_HRMS_AIPR set DESIG=? where CLT_EMPLOYEEID=? and  YEAR=?]]></query>
+
+<params><![CDATA[DESIGID~EMP_ID~PROP_IMV_PROP_YR]]></params>
+
+
+</service>
+
+
+
+
+step 3
+
+<query><![CDATA[Insert into DEV_EGOV_ADMIN.TL_HRMS_AIPR_DETAILS
+   (CLTD_ID, WFOID, PROPERTY_ADDRESS, PROPERTY_TYPE, PROPERTY_DESCRIPTION, 
+    TOTAL_PROPERTY_VALUE, PROPERTY_OWNERSHIP,  ACQUISITION_TYPE, ACQUISITION_DETAILS, ANNUAL_INCOM_F_PROPERTY, 
+    PROPERTY_STATUS, REMARKS)Values (?, ?, ?, ?, ?, ?, 1, 1, ?, ?, ?, ?)]]></query>
+
+<params><![CDATA[ID~WFOID~DISTRICT_SUB_DIVISION~P_TYPE~P_DESC~PRD_PRES_VAL~PRD_HOW_ACCQUIRED~PRD_ANNL_INCOME_PROP~ACT_STATUS~PRD_REMARKS]]></params>
+
+
+
+
+step 2
+<query><![CDATA[Insert into AUGMENT.AUGTX_WFO(WFOID, GROUPID, PROCESSID, PROCESSVERSION, BODEFNID, BOVERSION, STATEID, STATENAME, ACTIVITYSTATUS, ACTIVITYID,ACTIVITYNAME, CREATEDBY, ISCLOSED, CREATIONTIME, UPDATETIME)Values(?, 'GSIGROUP', 'HRMSAIPRPROCESS', 1, 'HRMSAIPRBO',1, 'FINISH', 'FINISH', 'UNCLAIMED', 'FINISH', 'Finish', ?, 'N', ?,?)]]></query>
+
+<params><![CDATA[WFOID~CLT_EMPLOYEEID~CLT_APPLICATION_DATE~CLT_APPLICATION_DATE]]></params>
+ 
+ 
+ STEP 1
+ 
+<service type="insertdb" connection="gsiConnection">
+
+ <query><![CDATA[Insert into TT_HRMS_AIPR(WFOID, CLT_APPLICATION_DATE, CLT_EMPLOYEEID, YEAR,DESIG) Values(?, ?,?,?,?)]]></query>
+<params><![CDATA[WFOID~DATE_OF_SUBMISSION~EMP_ID~PROP_IMV_PROP_YR~DESIGID]]></params>
+
+</service>
+ 
+ -->
+
+

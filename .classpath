@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/jar/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/jar/poi-3.8-20120326.jar"/>
+	<classpathentry kind="lib" path="C:/jar/poi-ooxml-3.7-20101029.jar"/>
+	<classpathentry kind="lib" path="C:/jar/poi-ooxml-schemas-3.7-beta1.jar"/>
+	<classpathentry kind="lib" path="C:/jar/rowset.jar"/>
+	<classpathentry kind="lib" path="C:/jar/xmlbeans.jar"/>
+	<classpathentry kind="lib" path="C:/jar/ojdbc6.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
